@@ -2,27 +2,27 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!--
-     
+
       Welcome!
       This pom.xml is *THE* file that defines your Maven style Java project.
-      
+
       Eclipse, IDEA and other development environments with Maven support
       or plugins can *import* this project by reading this file.
-      
+
       It usually contains tons of barely readable configuration. Luckily
       this basic pom.xml is somewhat readable. All necessary configuration
       for customizing your project if located here on top before the
       'END OF SIMPLE CONFIGURATION' line below.
-      
+
     -->
-    
+
     <!-- ==== START OF SIMPLE CONFIGURATION ==== -->
-    
+
     <!-- The three parts of the artifact name -->
     <groupId>fi.utu.tech</groupId>
     <artifactId>ooj-template</artifactId>
-    <version>1.0.0</version>
-    
+    <version>1.0.1</version>
+
     <!-- Additional information about the project -->
     <name>Example code for testing</name>
     <url>https://gitlab.utu.fi/tech/education/ooj/ooj-template</url>
@@ -32,21 +32,23 @@
 
     <properties>
         <!-- Configures the main class for this project (i.e. what to launch) -->
-        <project.mainclass>fi.utu.tech.Main</project.mainclass>
+        <project.mainclass>fi.utu.tech.exercise2.Main</project.mainclass>
+        <project.mainmodule>fi.utu.tech.exercise2</project.mainmodule>
+        <project.launcher>myapp</project.launcher>
 
         <!-- The source encoding should always be utf-8. Don't change. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Version numbers for various modules -->
         <jdk.version>11</jdk.version>
-        <jqwik.version>1.3.5</jqwik.version>
-        <junit.version>5.7.0</junit.version>
-        <junitplatform.version>1.7.0</junitplatform.version>
-        <javafx.version>15</javafx.version>
+        <jqwik.version>1.5.5</jqwik.version>
+        <junit.version>5.7.2</junit.version>
+        <junitplatform.version>1.7.2</junitplatform.version>
+        <kotlin.version>1.5.30</kotlin.version>
     </properties>
 
     <!-- ==== END OF SIMPLE CONFIGURATION ==== -->
-    
+
     <repositories>
         <!-- https://search.maven.org/ -->
         <repository>
@@ -56,11 +58,6 @@
             <id>central</id>
             <name>Central Repository</name>
             <url>https://repo.maven.apache.org/maven2</url>
-        </repository>
-        <repository>
-            <id>jcenter</id>
-            <name>jcenter</name>
-            <url>https://jcenter.bintray.com/</url>
         </repository>
     </repositories>
 
@@ -107,8 +104,22 @@
             <version>${junitplatform.version}</version>
             <scope>test</scope>
         </dependency> -->
-        
-        <!-- JavaFX (remove if not needed to speed up dep downloads)-->
+
+        <!--
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+        -->
+
+        <!-- JavaFX (remove if not needed to speed up dep downloads)
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
@@ -131,29 +142,70 @@
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
-            <artifactId>javafx-media</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
             <version>${javafx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-web</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
+        </dependency>-->
     </dependencies>
-  
+
     <build>
-        <plugins>
-        
+        <plugins><!--
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.6</version>
+                <configuration>
+                    <mainClass>${project.mainmodule}/${project.mainclass}</mainClass>
+                    <stripDebug>true</stripDebug>
+                    <compress>2</compress>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <noManPages>true</noManPages>
+                    <launcher>${project.launcher}</launcher>
+                </configuration>
+            </plugin>-->
+
+            <!-- https://github.com/diffplug/spotless/tree/main/plugin-maven
+                 clean up the project: mvn spotless:apply
+             -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>2.9.0</version>
+                <configuration>
+                    <formats>
+                        <format>
+                            <includes>
+                                <include>pom.xml</include>
+                                <include>*.md</include>
+                                <include>.gitignore</include>
+                            </includes>
+                            <trimTrailingWhitespace/>
+                            <endWithNewline/>
+                            <indent>
+                                <spaces>true</spaces>
+                                <spacesPerTab>4</spacesPerTab>
+                            </indent>
+                        </format>
+                    </formats>
+                    <java>
+                        <includes>
+                            <include>src/**.java</include>
+                        </includes>
+                        <importOrder />
+                        <removeUnusedImports />
+                        <prettier />
+                        <googleJavaFormat>
+                            <version>11</version>
+                            <style>AOSP</style>
+                        </googleJavaFormat>
+                    </java>
+                </configuration>
+            </plugin>
+
             <!-- Run this app with exec:java -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -163,18 +215,14 @@
                 </executions>
                 <configuration>
                     <mainClass>${project.mainclass}</mainClass>
-                    <arguments>
-                        <argument>arg1</argument>
-                        <argument>arg2</argument>
-                    </arguments>
                 </configuration>
             </plugin>
-            
+
             <!-- Make the packaged jar executable -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>3.2.0</version>
                 <configuration>
                   <!-- DO NOT include log4j.properties file in your Jar -->
                   <excludes>
@@ -188,20 +236,9 @@
                   </archive>
                 </configuration>
             </plugin>
-            
-            <!-- Download source code in Eclipse, best practice -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-eclipse-plugin</artifactId>
-                <version>2.10</version>
-                <configuration>
-                    <downloadSources>true</downloadSources>
-                    <downloadJavadocs>false</downloadJavadocs>
-                </configuration>
-            </plugin>
-            
+
             <!-- JDK source/target versions -->
-            <plugin>    
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
@@ -216,7 +253,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -238,7 +275,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                     <id>attach-javadocs</id>
@@ -322,7 +359,7 @@
                     </sourceFileExcludes>
                 </configuration>
             </plugin>
-            
+
             <!-- JUnit & JQwik test integration -->
 
             <plugin>
@@ -333,6 +370,35 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.0.0-M5</version>
             </plugin>
+
+            <!--
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <args>
+                        <arg>-Xuse-ir</arg>
+                    </args>
+                    <jvmTarget>${jdk.version}</jvmTarget>
+                </configuration>
+            </plugin>-->
 
         </plugins>
     </build>
