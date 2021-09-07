@@ -1,6 +1,16 @@
 package fi.utu.tech.exercise2.task1;
 
 public class Utilities {
+
+    /**
+     * Laskee annetun syötevektorin arvojen keskiarvon
+     *     ja palauttaa sen Integer tyyppinä
+     *
+     * @.pre values != null && values.length != 0
+     *
+     * @.post RESULT == syötteen keskiarvo
+     *
+     */
     public static Integer average(int[] values) {
         if (values == null || values.length == 0) return null;
         int sum = 0;
@@ -8,6 +18,13 @@ public class Utilities {
         return sum / values.length;
     }
 
+    /**
+     * Muuttaa syötenumeron oktaalinumeroksi
+     *
+     * @.pre
+     * @.post RESULT == syötteen oktaalinumero
+     *
+     */
     public static String toOct(int number) {
         String tmp = "";
         do {
