@@ -5,10 +5,13 @@ public class Utilities {
     /**
      * Laskee annetun syötevektorin arvojen keskiarvon
      *     ja palauttaa sen Integer tyyppinä
+     *     tai null jos alkuehdot eivät toteudu
      *
-     * @.pre values != null && values.length != 0
+     * @.pre values != null &&
+     *       values.length != 0
      *
-     * @.post RESULT == syötteen keskiarvo
+     * @.post RESULT == syötevektorin arvojen keskiarvo ||
+     *        RESULT == null
      *
      */
     public static Integer average(int[] values) {
@@ -19,10 +22,12 @@ public class Utilities {
     }
 
     /**
-     * Muuttaa syötenumeron oktaalinumeroksi
+     * Muuttaa syötenumeron oktaaliesitykseksi jos syöte positiivinen
+     *     muutoin palauttaa tyhjän merkkijonon
      *
-     * @.pre
-     * @.post RESULT == syötteen oktaalinumero
+     * @.pre true
+     * @.post RESULT == syötteen oktaaliesitys ||
+     *        RESULT == ""
      *
      */
     public static String toOct(int number) {
@@ -34,6 +39,35 @@ public class Utilities {
         return tmp;
     }
 
+    /**
+     * Koodaa annetun syötteen ROT13 algoritmillä
+     * Algoritmi muuttaa jokaisen syötteen kirjaimen
+     *     vaihtamalla sen kirjaimeen, joka on akkosissa
+     *     13 merkin päässä itsestään
+     *
+     * Tässä toteutuksessa kirjaimen siirtämisen suunta (+13, tai -13)
+     *     riippuu kirjaimesta. Välillä "A-M" kerroin on positiivinen,
+     *     jolloin algoritmi siirtää kirjainta eteenpäin 13 kirjainta,
+     *     ja välillä "N-Z" algoritmi siirtää kirjainta taaksepäin 13 kirjainta.
+     *     Tämän määrittävä osa ottaa huomioon myös pienet kirjaimet, joihin pätee
+     *     samat säännöt kuin edellä esitettyihin isoihin kirjaimiin.
+     *     Jos taas kirjain ei ole A-Z (tai a-z) välillä, algoritmi pitää
+     *     kirjaimen saman kuin se oli, sillä <kirjain> + 13 * 0 ==> <kirjain>
+     *
+     * Kirjaimilla on suoraan numeroesitys, joten toteutus voi verrata kirjaimia
+     *     ikäänkuin numeroina.
+     *
+     * Jos annettu syöte on tyhjä, toteutus palauttaa vain tyhjän merkkijonon.
+     *
+     * @.pre true
+     *
+     * @.post RESULT == FORALL(
+     *     c : 0 <= c < input.length;
+     *     RESULT[c] == (char) OLD(input[c]) + 13 ||
+     *     RESULT[c] == (char) OLD(input[c])
+     * )
+     *
+     */
     public static String rot13(String input) {
         String tmp = "";
         for (var c : input.toCharArray())
