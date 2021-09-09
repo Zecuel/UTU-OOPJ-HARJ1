@@ -10,8 +10,9 @@ public class Utilities {
      * @.pre values != null &&
      *       values.length != 0
      *
-     * @.post RESULT == syötevektorin arvojen keskiarvo ||
-     *        RESULT == null
+     * @.post RESULT == (
+     *     IntStream.of(values).sum()
+     * ) / values.length)
      *
      */
     public static Integer average(int[] values) {
