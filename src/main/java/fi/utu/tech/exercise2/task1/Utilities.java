@@ -26,17 +26,45 @@ public class Utilities {
      *     muutoin palauttaa tyhjän merkkijonon
      *
      * @.pre true
-     * @.post RESULT == syötteen oktaaliesitys ||
-     *        RESULT == ""
+     * @.post RESULT == FORALL(
+     *     i : 0 <= i < RESULT.length;
+     *     RESULT[(RESULT.length - 1) - i] == prependIntToString(
+     *         RESULT[Result.length - 1 - i],
+     *         getOctalRemainder(number / ((i + 1) * 8)
+     *     )
+     *
+     * )
      *
      */
     public static String toOct(int number) {
         String tmp = "";
         do {
-            tmp = (number % 8) + tmp;
+            tmp = prependIntToString(tmp, getOctalRemainder(number));
             number /= 8;
         } while (number > 0);
         return tmp;
+    }
+
+    /**
+     * Lisää annetun luvun annetun merkkijonon alkuun
+     *
+     * @.pre true
+     * @.post RESULT == value + OLD(input)
+     *
+     */
+    public static String prependIntToString(String input, int value) {
+        return value + input;
+    }
+
+    /**
+     * Palauttaa annetun numeron oktaalijäännöksen
+     * ( ==> numeron jakojäännös, kun jaetaan 8:lla )
+     *
+     * @.pre true
+     * @.post RESULT == number % 8
+     */
+    public static int getOctalRemainder(int number) {
+        return number % 8;
     }
 
     /**
