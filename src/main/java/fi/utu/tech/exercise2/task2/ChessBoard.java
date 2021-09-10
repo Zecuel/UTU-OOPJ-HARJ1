@@ -36,8 +36,8 @@ public class ChessBoard {
      *           FORALL(
      *               j : 0 <= j < board[i].length;
      *               board[i][j].length == 8 &&
-     *               ("-", "K", "Q", "R", "B", "N", "P").contains(board[i][j])   -- shakkinappulan tulee olla
-     *                                                                                  joku näistä merkeistä
+     *               List.of("-", "K", "Q", "R", "B", "N", "P").contains(board[i][j])   -- shakkinappulan tulee olla
+     *                                                                                         joku näistä merkeistä
      *           )
      *       )
      *
@@ -53,7 +53,7 @@ public class ChessBoard {
      *
      * Laudan rivien määrä tulee olla 8. usePaddingRows lisää lautaan tyhjät
      *     nappularivit laudan alkuun ja loppuun, kuten tehtävän kuvauksessa
-     *     esitetyssä laudassa on. Oletuksena tyhjiä rivejä ei lisätä
+     *     esitetyssä laudassa on
      *
      * @.pre usePaddingRows != null &&
      *       board != null &&
@@ -63,18 +63,19 @@ public class ChessBoard {
      *           FORALL(
      *               j : 0 <= j < board[i].length;
      *               board[i][j].length == 8 &&
-     *               ("-", "K", "Q", "R", "B", "N", "P").contains(board[i][j])      -- shakkinappulan tulee olla
-     *                                                                                     joku näistä merkeistä
+     *               List.of("-", "K", "Q", "R", "B", "N", "P").contains(board[i][j])      -- shakkinappulan tulee olla
+     *                                                                                            joku näistä merkeistä
      *           )
      *       )
      *
-     * @.post FORALL (                                                              -- split() yms lauseet jokaisella
+     * @.post board.length == RESULT.split("\n").length &&
+     *        FORALL (                                                              -- split() yms lauseet jokaisella
      *            i : 0 <= i < board.length;                                           totuuslauseella erikseen käytetyn
      *            FORALL (                                                             notaation takia
      *                j : 0 <= j < board[i].length;
      *                RESULT.split("\n")[i].replace("|", "")[j] == board[i][j] &&   -- Nappulat kopioitu oikein
      *                RESULT.split("\n")[i].replace("|", "").length == 8 &&         -- Rivissä 8 nappulaa
-     *                ("-", "K", "Q", "R", "B", "N", "P")
+     *                List.of("-", "K", "Q", "R", "B", "N", "P")
      *                    .contains(RESULT.split("\n")[i].replace("|", "")[j]) &&   -- Jokainen nappula on oikea nappula
      *                RESULT.split("\n")[i][0] == "|" &&                            -- "|" merkki rivin alussa
      *                RESULT.split("\n")[i][RESULT.length -1] == "|"                -- "|" merkki rivin lopussa
@@ -85,7 +86,7 @@ public class ChessBoard {
     public static String getBoardString(List<List<String>> board, boolean usePaddingRows) {
 
         if (board.size() != 8) {
-            throw new Error("Laudassa tulee olla 8 riviä nappuloita.");
+            throw new InvalidParameterException("Laudassa tulee olla 8 riviä nappuloita.");
         }
 
         if (usePaddingRows) {
@@ -122,7 +123,9 @@ public class ChessBoard {
      *
      * @.post FORALL(                                         -- Annettu vektori ei ollut null
      *            i : 0 <= i < chessPieces.length;
-     *            RESULT[i] == chessPieces[i]
+     *            RESULT[i] == chessPieces[i] &&
+     *            List.of("-", "K", "Q", "R", "B", "N", "P") -- Nappula on sallittu merkki
+     *                .contains(RESULT[i]
      *        ) ||
      *        FORALL(                                         -- Annettu vektori oli null
      *            i : 0 <= i < 8;
@@ -158,17 +161,17 @@ public class ChessBoard {
      *        FORALL(
      *            i : 0 <= i < RESULT.length;
      *            RESULT[i].length == 8 &&
-     *            (i == 0 || i == 7) ?                                            -- Vektorin indeksit 1,7
-     *            ("R", "N", "B", "Q", "K", "B", "N", "R").equals(RESULT[i]) :
-     *            (i == 1 || i == 6) ?                                            -- Vektorin indeksit 2,6
-     *            ("P", "P", "P", "P", "P", "P", "P", "P").equals(RESULT[i]) :
-     *            (i == 2 || i == 3 || i == 4 || i == 5) ?                        -- Vektorin indeksit 2,3,4,5
-     *            ("-", "-", "-", "-", "-", "-", "-", "-").equals(RESULT[i]) :
-     *            false                                                           -- Looppi ei koskaan päädy tänne,
-     *        )                                                                          voitaisiin paremmin toteuttaa
-     *                                                                                   switch lausekkeella mutta
-     *                                                                                   notaation takia tässä
-     *                                                                                   if-else shorthand notaatiolla
+     *            (i == 0 || i == 7) ?                                                -- Vektorin indeksit 1,7
+     *            List.of("R", "N", "B", "Q", "K", "B", "N", "R").equals(RESULT[i]) :
+     *            (i == 1 || i == 6) ?                                                -- Vektorin indeksit 2,6
+     *            List.of("P", "P", "P", "P", "P", "P", "P", "P").equals(RESULT[i]) :
+     *            (i == 2 || i == 3 || i == 4 || i == 5) ?                            -- Vektorin indeksit 2,3,4,5
+     *            List.of("-", "-", "-", "-", "-", "-", "-", "-").equals(RESULT[i]) :
+     *            false                                                               -- Looppi ei koskaan päädy tänne,
+     *        )                                                                              voitaisiin paremmin toteuttaa
+     *                                                                                       switch lausekkeella mutta
+     *                                                                                       notaation takia tässä
+     *                                                                                       if-else shorthand notaatiolla
      *
      */
     public static List<List<String>> createEmptyBoard() {
@@ -197,7 +200,7 @@ public class ChessBoard {
      *
      * @.pre true
      *
-     * @.post ("R", "N", "B", "Q", "K", "B", "N", "R").equals(RESULT)
+     * @.post List.of("R", "N", "B", "Q", "K", "B", "N", "R").equals(RESULT)
      *
      */
     public static List<String> createDefaultRoyalsBoardRow() {
@@ -222,7 +225,7 @@ public class ChessBoard {
      *
      * @.pre true
      *
-     * @.post ("P", "P", "P", "P", "P", "P", "P", "P").equals(RESULT)
+     * @.post List.of("P", "P", "P", "P", "P", "P", "P", "P").equals(RESULT)
      *
      */
     public static List<String> createDefaultPawnBoardRow() {
@@ -247,7 +250,7 @@ public class ChessBoard {
      *
      * @.pre true
      *
-     * @.post ("-", "-", "-", "-", "-", "-", "-", "-").equals(RESULT)
+     * @.post List.of("-", "-", "-", "-", "-", "-", "-", "-").equals(RESULT)
      *
      */
     public static List<String> createEmptyBoardRow() {
