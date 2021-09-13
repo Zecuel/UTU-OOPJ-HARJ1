@@ -83,10 +83,11 @@ public class ChessBoard {
      *        )
      *
      */
-    public static String getBoardString(List<List<String>> board, boolean usePaddingRows) {
+    public static String getBoardString(List<List<String>> board, boolean usePaddingRows)
+            throws InvalidParameterException {
 
         if (board.size() != 8) {
-            throw new InvalidParameterException("Laudassa tulee olla 8 riviä nappuloita.");
+            throw new InvalidParameterException("Expected 8 rows");
         }
 
         if (usePaddingRows) {
@@ -98,6 +99,10 @@ public class ChessBoard {
         StringBuilder result = new StringBuilder();
 
         for (List<String> row : board) {
+
+            if (row.size() != 8) {
+                throw new InvalidParameterException("Expected 8 chess pieces");
+            }
 
             result.append("|");                    // Add "|" before each row
 
@@ -118,19 +123,20 @@ public class ChessBoard {
      *
      * Syötevektori joko null -arvo tai vektori merkkijonoja, jonka pituus on 8
      *
-     * @.pre (chessPieces != null && chessPieces.length == 8) ||
-     *       chessPieces == null
+     * @.pre (chessPieces != null && chessPieces.length == 8) &&     -- Vektorin pituus 8, kun vektori != null
+     *       FORALL(
+     *           i : 0 <= i < chessPieces.length;
+     *           List.of("-", "K", "Q", "R", "B", "N", "P")          -- Jokainen nappula sallittu merkki
+     *               .contains(chessPieces[i])
+     *       ) ||
+     *       chessPieces == null                                     -- Vektori == null
      *
-     * @.post FORALL(                                         -- Annettu vektori ei ollut null
-     *            i : 0 <= i < chessPieces.length;
-     *            RESULT[i] == chessPieces[i] &&
-     *            List.of("-", "K", "Q", "R", "B", "N", "P") -- Nappula on sallittu merkki
-     *                .contains(RESULT[i]
-     *        ) ||
-     *        FORALL(                                         -- Annettu vektori oli null
-     *            i : 0 <= i < 8;
+     * @.post RESULT.length == 8 &&
+     *        (RESULT.equals(chessPieces) ||                         -- Annettu vektori ei ollut null
+     *        FORALL(                                                -- Annettu vektori oli null
+     *            i : 0 <= i < RESULT.length;
      *            RESULT[i] == "-"
-     *        )
+     *        ))
      *
      */
     public static List<String> createBoardRow(List<String> chessPieces) throws InvalidParameterException {
@@ -141,13 +147,20 @@ public class ChessBoard {
                 throw new InvalidParameterException("Expected 8 chess pieces");
             }
 
+            List<String> validChessPieces = List.of("-", "K", "Q", "R", "B", "N", "P");
+
+            for (String chessPiece : chessPieces) {
+                if (!validChessPieces.contains(chessPiece)) {
+                    throw new InvalidParameterException("Expected chess piece to be one of: -,K,Q,R,B,N,P");
+                }
+            }
+
+            return chessPieces;
+
         } else {
-
-            chessPieces = createEmptyBoardRow();
-
+            return new ArrayList<>(createEmptyBoardRow());
         }
 
-        return new ArrayList<>(chessPieces);
     }
 
     /**
@@ -160,6 +173,7 @@ public class ChessBoard {
      *        RESULT.length == 8 &&
      *        FORALL(
      *            i : 0 <= i < RESULT.length;
+     *            RESULT[i] != null &&
      *            RESULT[i].length == 8 &&
      *            (i == 0 || i == 7) ?                                                -- Vektorin indeksit 1,7
      *            List.of("R", "N", "B", "Q", "K", "B", "N", "R").equals(RESULT[i]) :
@@ -182,10 +196,10 @@ public class ChessBoard {
 
         board.add(createDefaultPawnBoardRow());
 
-        board.add(createBoardRow(null));
-        board.add(createBoardRow(null));
-        board.add(createBoardRow(null));
-        board.add(createBoardRow(null));
+        board.add(createEmptyBoardRow());
+        board.add(createEmptyBoardRow());
+        board.add(createEmptyBoardRow());
+        board.add(createEmptyBoardRow());
 
         board.add(createDefaultPawnBoardRow());
 
@@ -200,7 +214,9 @@ public class ChessBoard {
      *
      * @.pre true
      *
-     * @.post List.of("R", "N", "B", "Q", "K", "B", "N", "R").equals(RESULT)
+     * @.post RESULT != null &&
+     *        RESULT.length == 8 &&
+     *        List.of("R", "N", "B", "Q", "K", "B", "N", "R").equals(RESULT)
      *
      */
     public static List<String> createDefaultRoyalsBoardRow() {
@@ -225,7 +241,9 @@ public class ChessBoard {
      *
      * @.pre true
      *
-     * @.post List.of("P", "P", "P", "P", "P", "P", "P", "P").equals(RESULT)
+     * @.post RESULT != null &&
+     *        RESULT.length == 8 &&
+     *        List.of("P", "P", "P", "P", "P", "P", "P", "P").equals(RESULT)
      *
      */
     public static List<String> createDefaultPawnBoardRow() {
@@ -250,7 +268,9 @@ public class ChessBoard {
      *
      * @.pre true
      *
-     * @.post List.of("-", "-", "-", "-", "-", "-", "-", "-").equals(RESULT)
+     * @.post RESULT != null &&
+     *        RESULT.length == 8 &&
+     *        List.of("-", "-", "-", "-", "-", "-", "-", "-").equals(RESULT)
      *
      */
     public static List<String> createEmptyBoardRow() {
