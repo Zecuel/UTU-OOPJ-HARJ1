@@ -27,7 +27,7 @@ public class Age {
      *
      * @.post rawDay == day + 30 * (month + 12 * year) &&
      *        currentDay == LocalDate.now().getDayOfMonth() &&
-     *        currentMonth == LocalDate.now()getMonth().getValue() &&
+     *        currentMonth == LocalDate.now().getMonth().getValue() &&
      *        currentYear == LocalDate.now().getYear() &&
      *        rawDay == currentDay + 30 * (currentMonth + 12 * currentYear) &&
      *        difference = rawDay2 - rawDay &&
