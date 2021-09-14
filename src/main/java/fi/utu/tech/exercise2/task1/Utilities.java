@@ -81,7 +81,7 @@ public class Utilities {
      *     Tämän määrittävä osa ottaa huomioon myös pienet kirjaimet, joihin pätee
      *     samat säännöt kuin edellä esitettyihin isoihin kirjaimiin.
      *     Jos taas kirjain ei ole A-Z (tai a-z) välillä, algoritmi pitää
-     *     kirjaimen saman kuin se oli, sillä <kirjain> + 13 * 0 ==> <kirjain>
+     *     kirjaimen saman kuin se oli, sillä <kirjain> + 13 * 0 <==> <kirjain>
      *
      * Kirjaimilla on suoraan numeroesitys, joten toteutus voi verrata kirjaimia
      *     ikäänkuin numeroina.
